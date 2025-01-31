@@ -1,0 +1,61 @@
+// ==UserScript==
+// @name         Amazon Saved Items Deleter
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Automatically delete Saved Items in Amazon cart
+// @author       ...
+// @match        https://www.amazon.com/*
+// @icon         https://www.amazon.com/favicon.ico
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    /**
+     * Recursively deletes saved items by clicking the "Delete" button.
+     * Uses setTimeout for scheduling to avoid blocking the main thread.
+     */
+    function deleteSavedItems() {
+        // Grab the "Delete" inputs in the saved cart section
+        const query = document.querySelectorAll('#sc-saved-cart input[value="Delete"]');
+        
+        // Grab the number of saved items from the attribute
+        const savedItemsElement = document.getElementById('sc-saved-cart-list-caption-text');
+        if (!savedItemsElement) {
+            // If the element doesn't exist, do nothing or log a warning
+            console.warn('Could not find the "Saved Items" element.');
+            return;
+        }
+        
+        // Get the quantity of saved items from the data-saved-item-quantity attribute
+        let savedItems = parseInt(savedItemsElement.getAttribute('data-saved-item-quantity'), 10);
+
+        // If there are no saved items, we're done
+        if (!savedItems || savedItems <= 0) {
+            console.log('No saved items to delete.');
+            return;
+        }
+
+        // If there's at least one delete button, click the first one
+        if (query && query.length > 0) {
+            query[0].click();
+            // Decrement our counter
+            savedItems--;
+
+            // If there are still items left, schedule another deletion
+            if (savedItems > 0) {
+                // Short delay to allow page to refresh or the item to be removed
+                setTimeout(deleteSavedItems, 100);
+            }
+        } else {
+            // If we didn't find a delete button, wait a bit longer and try again
+            setTimeout(deleteSavedItems, 200);
+        }
+    }
+
+    // Run the deletion once the DOM is ready
+    window.addEventListener('load', function() {
+        deleteSavedItems();
+    });
+})();
