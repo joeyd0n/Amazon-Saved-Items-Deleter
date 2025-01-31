@@ -1,5 +1,5 @@
 # Amazon-Saved-Items-Deleter
-A Tampermonkey userscript that automatically deletes all of your saved items from your Amazon Saved For Later. This can be helpful if you have a large number of saved items and want to clear them out quickly.
+A Tampermonkey userscript that automatically deletes all of your saved for later items from your Amazon cart. This can be helpful if you have a large number of saved items and want to clear them out quickly.
 
 Installation
 1. Install Tampermonkey
